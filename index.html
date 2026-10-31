@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KIMIA INTERAKTIF - Laju Reaksi | SMAN 46 Maluku Tengah</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js for Lab Virtual Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        emerald: {
+                            500: '#10b981',
+                            600: '#059669',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .tab-btn.active {
+            background-color: #1e40af;
+            color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(30, 64, 175, 0.3);
+        }
+        .sub-tab-btn.active {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+        
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.92; transform: scale(0.99); }
+        }
+        .animate-pulse-subtle { animation: pulse-subtle 3s infinite ease-in-out; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-md border-b border-slate-200">
+        <!-- Top Info Bar -->
+        <div class="bg-brand-900 text-white text-xs px-4 py-1.5 flex flex-wrap justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <span><i class="fa-solid fa-school text-emerald-400 mr-1"></i> SMAN 46 Maluku Tengah</span>
+                <span class="hidden sm:inline"><i class="fa-solid fa-user-tie text-emerald-400 mr-1"></i> Penyusun: <strong>Sarkia Silawane, S.Pd.</strong></span>
+            </div>
+            <div>
+                <span class="bg-emerald-600/90 text-white px-2 py-0.5 rounded text-[10px] font-semibold tracking-wide">Fase F / SMA Kelas XI</span>
+            </div>
+        </div>
+
+        <!-- Main Header -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('beranda')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-700 to-emerald-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                    <i class="fa-solid fa-atom text-xl animate-spin" style="animation-duration: 12s;"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg sm:text-xl text-brand-900 tracking-tight leading-none">KIMIA INTERAKTIF</h1>
+                    <p class="text-xs text-brand-600 font-semibold mt-0.5">Materi Laju Reaksi</p>
+                </div>
+            </div>
+
+            <!-- Mobile Menu Toggle Button -->
+            <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="lg:hidden text-slate-700 hover:text-brand-700 focus:outline-none text-2xl p-1">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <!-- Desktop Navigation Tabs -->
+            <nav class="hidden lg:flex items-center space-x-1">
+                <button onclick="switchTab('beranda')" class="tab-btn active px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5"><i class="fa-solid fa-house"></i> Beranda</button>
+                <button onclick="switchTab('cptp')" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-brand-700 hover:bg-slate-100 transition flex items-center gap-1.5"><i class="fa-solid fa-bullseye"></i> CP & TP</button>
+                <button onclick="switchTab('materi')" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-brand-700 hover:bg-slate-100 transition flex items-center gap-1.5"><i class="fa-solid fa-book-open"></i> Materi</button>
+                <button onclick="switchTab('lab')" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-brand-700 hover:bg-slate-100 transition flex items-center gap-1.5"><i class="fa-solid fa-flask text-emerald-500"></i> Lab Virtual</button>
+                <button onclick="switchTab('video')" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-brand-700 hover:bg-slate-100 transition flex items-center gap-1.5"><i class="fa-solid fa-circle-play"></i> Video</button>
+                <button onclick="switchTab('latihan')" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-brand-700 hover:bg-slate-100 transition flex items-center gap-1.5"><i class="fa-solid fa-pen-to-square"></i> Latihan</button>
+                <button onclick="switchTab('evaluasi')" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-brand-700 hover:bg-slate-100 transition flex items-center gap-1.5"><i class="fa-solid fa-clipboard-check text-amber-500"></i> Evaluasi</button>
+                <button onclick="switchTab('refleksi')" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-brand-700 hover:bg-slate-100 transition flex items-center gap-1.5"><i class="fa-solid fa-heart-pulse"></i> Refleksi</button>
+            </nav>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobileMenu" class="hidden lg:hidden bg-white border-t border-slate-200 px-4 py-3 space-y-2">
+            <button onclick="switchTab('beranda'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded text-sm font-semibold hover:bg-brand-50 text-slate-700"><i class="fa-solid fa-house mr-2"></i> Beranda</button>
+            <button onclick="switchTab('cptp'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded text-sm font-semibold hover:bg-brand-50 text-slate-700"><i class="fa-solid fa-bullseye mr-2"></i> CP & TP</button>
+            <button onclick="switchTab('materi'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded text-sm font-semibold hover:bg-brand-50 text-slate-700"><i class="fa-solid fa-book-open mr-2"></i> Materi Pembelajaran</button>
+            <button onclick="switchTab('lab'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded text-sm font-semibold hover:bg-brand-50 text-slate-700 text-emerald-600"><i class="fa-solid fa-flask mr-2"></i> Laboratorium Virtual</button>
+            <button onclick="switchTab('video'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded text-sm font-semibold hover:bg-brand-50 text-slate-700"><i class="fa-solid fa-circle-play mr-2"></i> Video Pembelajaran</button>
+            <button onclick="switchTab('latihan'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded text-sm font-semibold hover:bg-brand-50 text-slate-700"><i class="fa-solid fa-pen-to-square mr-2"></i> Latihan Soal</button>
+            <button onclick="switchTab('evaluasi'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded text-sm font-semibold hover:bg-brand-50 text-slate-700 text-amber-600"><i class="fa-solid fa-clipboard-check mr-2"></i> Evaluasi (20 Soal)</button>
+            <button onclick="switchTab('refleksi'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded text-sm font-semibold hover:bg-brand-50 text-slate-700"><i class="fa-solid fa-heart-pulse mr-2"></i> Refleksi</button>
+        </div>
+
+        <!-- Global Progress Bar -->
+        <div class="w-full bg-slate-200 h-1.5">
+            <div id="globalProgressBar" class="bg-gradient-to-r from-brand-600 to-emerald-500 h-1.5 w-[12.5%] transition-all duration-500"></div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- ================= HALAMAN BERANDA ================= -->
+        <section id="tab-beranda" class="tab-content block space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative bg-gradient-to-r from-brand-900 via-brand-800 to-slate-900 rounded-3xl overflow-hidden shadow-2xl text-white min-h-[420px] flex items-center">
+                <!-- Molecule Interactive Canvas Canvas -->
+                <canvas id="heroCanvas" class="absolute inset-0 w-full h-full opacity-40 cursor-pointer"></canvas>
+                
+                <div class="relative z-10 p-6 sm:p-12 max-w-2xl space-y-6">
+                    <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold backdrop-blur">
+                        <i class="fa-solid fa-sparkles text-amber-300"></i> Media Pembelajaran Kurikulum Merdeka
+                    </span>
+                    <h1 class="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
+                        Eksplorasi Konsep <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-300">Laju Reaksi</span> Kimia
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                        Selamat datang di portal interaktif KIMIA SMAN 46 Maluku Tengah. Pelajari dinamika pergerakan molekul, teori tumbukan, faktor laju reaksi, dan simulasi laboratorium virtual secara intuitif.
+                    </p>
+                    <div class="flex flex-wrap gap-4 pt-2">
+                        <button onclick="switchTab('cptp')" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold px-7 py-3.5 rounded-xl shadow-lg shadow-emerald-500/30 transition-all hover:scale-105 flex items-center gap-2">
+                            <span>Mulai Belajar</span>
+                            <i class="fa-solid fa-circle-arrow-right"></i>
+                        </button>
+                        <button onclick="switchTab('lab')" class="bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3.5 rounded-xl border border-white/20 backdrop-blur transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-flask text-emerald-400"></i>
+                            <span>Uji Simulasi Lab</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Petunjuk Penggunaan Media -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-compass text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Petunjuk Penggunaan Media</h2>
+                        <p class="text-xs text-slate-500">Ikuti alur pembelajaran untuk pengalaman belajar optimal</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-brand-300 transition group">
+                        <div class="w-8 h-8 rounded-full bg-brand-600 text-white font-bold flex items-center justify-center text-xs mb-3 group-hover:scale-110 transition">1</div>
+                        <h3 class="font-bold text-slate-800 text-sm mb-1">Capaian & Tujuan</h3>
+                        <p class="text-xs text-slate-600">Pahami indikator kompetensi dan peta konsep laju reaksi.</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-brand-300 transition group">
+                        <div class="w-8 h-8 rounded-full bg-brand-600 text-white font-bold flex items-center justify-center text-xs mb-3 group-hover:scale-110 transition">2</div>
+                        <h3 class="font-bold text-slate-800 text-sm mb-1">Pelajari Materi</h3>
+                        <p class="text-xs text-slate-600">Pelajari teori tumbukan, grafik orde, & faktor laju reaksi.</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-emerald-300 transition group">
+                        <div class="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-xs mb-3 group-hover:scale-110 transition">3</div>
+                        <h3 class="font-bold text-slate-800 text-sm mb-1">Simulasi Virtual</h3>
+                        <p class="text-xs text-slate-600">Uji variasi suhu, konsentrasi, luas permukaan & katalis.</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-amber-300 transition group">
+                        <div class="w-8 h-8 rounded-full bg-amber-500 text-white font-bold flex items-center justify-center text-xs mb-3 group-hover:scale-110 transition">4</div>
+                        <h3 class="font-bold text-slate-800 text-sm mb-1">Evaluasi & Refleksi</h3>
+                        <p class="text-xs text-slate-600">Kerjakan 20 soal ujian dan isi lembar refleksi diri.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Identitas Lengkap Media & Guru -->
+            <div class="bg-gradient-to-r from-slate-900 to-brand-950 text-white rounded-2xl p-6 sm:p-8 shadow-md">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                    <div>
+                        <span class="text-emerald-400 font-semibold text-xs tracking-wider uppercase">Identitas Media Pembelajaran</span>
+                        <h3 class="text-2xl font-bold mt-1 text-white">SMAN 46 Maluku Tengah</h3>
+                        <div class="mt-4 space-y-2 text-xs sm:text-sm text-slate-300">
+                            <p><strong class="text-white">Mata Pelajaran:</strong> Kimia</p>
+                            <p><strong class="text-white">Fase / Kelas:</strong> Fase F / Kelas XI SMA</p>
+                            <p><strong class="text-white">Materi Pokok:</strong> Laju Reaksi & Teori Tumbukan</p>
+                            <p><strong class="text-white">Penyusun:</strong> Sarkia Silawane, S.Pd.</p>
+                            <p><strong class="text-white">Sasaran Platform:</strong> Web Responsif (PC, Tablet, Smartphone)</p>
+                        </div>
+                    </div>
+                    <div class="bg-white/10 p-6 rounded-xl border border-white/10 backdrop-blur text-center space-y-3">
+                        <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-400/40 flex items-center justify-center mx-auto text-2xl">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-base">Pembelajaran Berbasis Digital</h4>
+                        <p class="text-xs text-slate-300">"Mengembangkan pemahaman bermakna melalui visualisasi interaktif dan pengalaman laboratorium virtual."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= MENU CAPAIAN & TUJUAN PEMBELAJARAN ================= -->
+        <section id="tab-cptp" class="tab-content hidden space-y-8">
+            <!-- Header Section -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                <div class="max-w-3xl">
+                    <span class="text-brand-600 font-bold text-xs uppercase tracking-wider">Kurikulum Merdeka - Fase F</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Capaian & Tujuan Pembelajaran</h2>
+                    <p class="text-slate-600 text-sm mt-2">Panduan pembelajaran materi Laju Reaksi untuk mencapai kompetensi analitis dan praktis peserta didik.</p>
+                </div>
+            </div>
+
+            <!-- Grid CP & TP -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Capaian Pembelajaran -->
+                <div class="lg:col-span-1 bg-gradient-to-br from-brand-800 to-brand-950 text-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-emerald-400 text-2xl font-bold">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Capaian Pembelajaran (CP)</h3>
+                        <p class="text-xs sm:text-sm text-slate-200 leading-relaxed">
+                            Peserta didik mampu mengamati, memprediksi, dan mengklasifikasikan fenomena reaksi kimia berdasarkan dinamika laju reaksi, memahami faktor-faktor yang memengaruhinya melalui teori tumbukan, serta menerapkan prinsip laju reaksi dalam pemecahan masalah kehidupan sehari-hari dan teknologi.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-white/10 text-xs text-emerald-300 font-semibold">
+                        SMAN 46 Maluku Tengah - Fase F (Kelas XI)
+                    </div>
+                </div>
+
+                <!-- 8 Poin Tujuan Pembelajaran -->
+                <div class="lg:col-span-2 bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-emerald-600"></i> 8 Indikator Tujuan Pembelajaran
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs sm:text-sm">
+                        <div class="p-3 rounded-lg bg-slate-50 border border-slate-200/70 flex gap-3">
+                            <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-xs flex-shrink-0">1</span>
+                            <span class="text-slate-700">Menjelaskan pengertian dan konsep laju reaksi kimia.</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-50 border border-slate-200/70 flex gap-3">
+                            <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-xs flex-shrink-0">2</span>
+                            <span class="text-slate-700">Memahami perubahan konsentrasi pereaksi & produk terhadap waktu.</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-50 border border-slate-200/70 flex gap-3">
+                            <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-xs flex-shrink-0">3</span>
+                            <span class="text-slate-700">Menjelaskan teori tumbukan efektif dalam reaksi kimia.</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-50 border border-slate-200/70 flex gap-3">
+                            <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-xs flex-shrink-0">4</span>
+                            <span class="text-slate-700">Mengidentifikasi 4 faktor utama yang memengaruhi laju reaksi.</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-50 border border-slate-200/70 flex gap-3">
+                            <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-xs flex-shrink-0">5</span>
+                            <span class="text-slate-700">Menganalisis efek konsentrasi, luas permukaan, suhu, & katalis.</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-50 border border-slate-200/70 flex gap-3">
+                            <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-xs flex-shrink-0">6</span>
+                            <span class="text-slate-700">Menjelaskan hubungan energi aktivasi ($E_a$) dengan laju reaksi.</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-50 border border-slate-200/70 flex gap-3">
+                            <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-xs flex-shrink-0">7</span>
+                            <span class="text-slate-700">Menganalisis diagram energi reaksi eksoterm & endoterm.</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-50 border border-slate-200/70 flex gap-3">
+                            <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-xs flex-shrink-0">8</span>
+                            <span class="text-slate-700">Menerapkan konsep laju reaksi pada fenomena sehari-hari.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Peta Konsep Interaktif -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                <h3 class="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-sitemap text-brand-600"></i> Peta Konsep Interaktif Laju Reaksi
+                </h3>
+                
+                <div class="overflow-x-auto p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="min-w-[650px] flex flex-col items-center space-y-6">
+                        <!-- Root Node -->
+                        <div class="bg-gradient-to-r from-brand-700 to-brand-900 text-white font-extrabold px-6 py-3 rounded-xl shadow-md text-sm text-center tracking-wide">
+                            LAJU REAKSI KIMIA
+                        </div>
+
+                        <!-- Connector -->
+                        <div class="w-0.5 h-6 bg-brand-400"></div>
+
+                        <!-- Level 1 Branches -->
+                        <div class="grid grid-cols-4 gap-4 w-full">
+                            <!-- Branch 1 -->
+                            <div class="flex flex-col items-center">
+                                <div class="bg-brand-600 text-white font-bold p-2.5 rounded-lg text-xs text-center w-full shadow-sm">
+                                    Konsep Laju
+                                </div>
+                                <div class="w-0.5 h-4 bg-brand-300"></div>
+                                <div class="bg-white p-2.5 rounded border border-slate-300 text-[11px] text-slate-600 text-center w-full">
+                                    $\Delta [Konsentrasi] / \Delta t$
+                                </div>
+                            </div>
+                            <!-- Branch 2 -->
+                            <div class="flex flex-col items-center">
+                                <div class="bg-emerald-600 text-white font-bold p-2.5 rounded-lg text-xs text-center w-full shadow-sm">
+                                    Teori Tumbukan
+                                </div>
+                                <div class="w-0.5 h-4 bg-emerald-300"></div>
+                                <div class="bg-white p-2.5 rounded border border-slate-300 text-[11px] text-slate-600 text-center w-full">
+                                    Energi Aktivasi ($E_a$) & Orientasi
+                                </div>
+                            </div>
+                            <!-- Branch 3 -->
+                            <div class="flex flex-col items-center">
+                                <div class="bg-amber-600 text-white font-bold p-2.5 rounded-lg text-xs text-center w-full shadow-sm">
+                                    Faktor Penentu
+                                </div>
+                                <div class="w-0.5 h-4 bg-amber-300"></div>
+                                <div class="bg-white p-2.5 rounded border border-slate-300 text-[11px] text-slate-600 text-center w-full">
+                                    Konsentrasi, Suhu, Luas, Katalis
+                                </div>
+                            </div>
+                            <!-- Branch 4 -->
+                            <div class="flex flex-col items-center">
+                                <div class="bg-indigo-600 text-white font-bold p-2.5 rounded-lg text-xs text-center w-full shadow-sm">
+                                    Persamaan Laju
+                                </div>
+                                <div class="w-0.5 h-4 bg-indigo-300"></div>
+                                <div class="bg-white p-2.5 rounded border border-slate-300 text-[11px] text-slate-600 text-center w-full">
+                                    $v = k [A]^x [B]^y$ & Orde Reaksi
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= MENU MATERI PEMBELAJARAN ================= -->
+        <section id="tab-materi" class="tab-content hidden space-y-6">
+            <!-- Sub Navigation for Materi -->
+            <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap gap-2">
+                <button onclick="switchSubMateri('materi-1')" class="sub-tab-btn active px-4 py-2 rounded-xl text-xs font-bold transition">1. Konsep Laju</button>
+                <button onclick="switchSubMateri('materi-2')" class="sub-tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition">2. Teori Tumbukan & $E_a$</button>
+                <button onclick="switchSubMateri('materi-3')" class="sub-tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition">3. Faktor Laju Reaksi</button>
+                <button onclick="switchSubMateri('materi-4')" class="sub-tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition">4. Persamaan & Orde</button>
+                <button onclick="switchSubMateri('materi-5')" class="sub-tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition">5. Aplikasi Sehari-hari</button>
+            </div>
+
+            <!-- Sub Materi 1: Konsep Laju Reaksi -->
+            <div id="materi-1" class="sub-materi-content block space-y-6">
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4">
+                    <h3 class="text-xl font-bold text-brand-900 flex items-center gap-2">
+                        <i class="fa-solid fa-hourglass-half text-brand-600"></i> Pengertian dan Konsep Laju Reaksi
+                    </h3>
+                    <p class="text-sm text-slate-700 leading-relaxed">
+                        <strong>Laju reaksi</strong> didefinisikan sebagai berkurangnya konsentrasi pereaksi (reaktan) atau bertambahnya konsentrasi hasil reaksi (produk) per satuan waktu ($M/s$ atau $mol\cdot L^{-1}s^{-1}$).
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-3">
+                            <h4 class="font-bold text-sm text-slate-800">Persamaan Umum Reaksi: <span class="text-brand-600">A → B</span></h4>
+                            <div class="space-y-2 text-xs text-slate-700">
+                                <p class="p-2 bg-white rounded border border-slate-200">
+                                    Laju Pengurangan Reaktan A: $v_A = -\frac{\Delta [A]}{\Delta t}$
+                                </p>
+                                <p class="p-2 bg-white rounded border border-slate-200">
+                                    Laju Pertambahan Produk B: $v_B = +\frac{\Delta [B]}{\Delta t}$
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Canvas Grafik Interaktif Reaktan & Produk -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col items-center">
+                            <h4 class="font-bold text-xs text-slate-700 mb-2">Grafik Perubahan Konsentrasi vs Waktu</h4>
+                            <canvas id="materiGrafikCanvas" width="320" height="180" class="bg-white rounded-lg border border-slate-200"></canvas>
+                            <div class="flex gap-4 mt-2 text-[11px] font-semibold">
+                                <span class="text-red-500"><i class="fa-solid fa-minus"></i> Reaktan (Berkurang)</span>
+                                <span class="text-emerald-500"><i class="fa-solid fa-minus"></i> Produk (Bertambah)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub Materi 2: Teori Tumbukan & Energi Aktivasi -->
+            <div id="materi-2" class="sub-materi-content hidden space-y-6">
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4">
+                    <h3 class="text-xl font-bold text-brand-900 flex items-center gap-2">
+                        <i class="fa-solid fa-burst text-amber-500"></i> Teori Tumbukan & Energi Aktivasi ($E_a$)
+                    </h3>
+                    <p class="text-sm text-slate-700 leading-relaxed">
+                        Reaksi kimia terjadi karena partikel-partikel pereaksi saling bertumbukan. Namun, tidak semua tumbukan menghasilkan reaksi. Hanya <strong>tumbukan efektif</strong> yang dapat memutus ikatan lama dan membentuk ikatan baru.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 space-y-2">
+                            <h4 class="font-bold text-sm text-emerald-800"><i class="fa-solid fa-circle-check text-emerald-600"></i> Syarat Tumbukan Efektif:</h4>
+                            <ul class="list-disc list-inside text-xs text-emerald-900 space-y-1">
+                                <li>Memiliki orientasi posisi molekul yang tepat saat bertumbukan.</li>
+                                <li>Memiliki energi minimum yang cukup untuk melampaui <strong>Energi Aktivasi ($E_a$)</strong>.</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 space-y-2">
+                            <h4 class="font-bold text-sm text-amber-800"><i class="fa-solid fa-bolt text-amber-600"></i> Energi Aktivasi ($E_a$):</h4>
+                            <p class="text-xs text-amber-900 leading-relaxed">
+                                Energi penghalang minimum yang harus dimiliki oleh molekul-molekul reaktan agar tumbukan menghasilkan reaksi kimia. Semakin rendah $E_a$, semakin cepat reaksi berlangsung.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Visual Diagram Energi -->
+                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-sm text-slate-800 mb-3 text-center">Diagram Energi Reaksi Eksoterm & Endoterm</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <canvas id="diagramEksotermCanvas" width="300" height="160" class="bg-white rounded border border-slate-200 mx-auto"></canvas>
+                            <canvas id="diagramEndotermCanvas" width="300" height="160" class="bg-white rounded border border-slate-200 mx-auto"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub Materi 3: Faktor Laju Reaksi -->
+            <div id="materi-3" class="sub-materi-content hidden space-y-6">
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4">
+                    <h3 class="text-xl font-bold text-brand-900 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-emerald-600"></i> Faktor-Faktor yang Memengaruhi Laju Reaksi
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                        <div class="p-5 rounded-xl bg-blue-50 border border-blue-200 space-y-2">
+                            <div class="w-9 h-9 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm">1</div>
+                            <h4 class="font-bold text-sm text-blue-900">Konsentrasi</h4>
+                            <p class="text-xs text-blue-800 leading-relaxed">
+                                Semakin tinggi konsentrasi, semakin banyak jumlah partikel per satuan volume, sehingga frekuensi tumbukan makin tinggi.
+                            </p>
+                        </div>
+
+                        <div class="p-5 rounded-xl bg-emerald-50 border border-emerald-200 space-y-2">
+                            <div class="w-9 h-9 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-sm">2</div>
+                            <h4 class="font-bold text-sm text-emerald-900">Luas Permukaan</h4>
+                            <p class="text-xs text-emerald-800 leading-relaxed">
+                                Semakin halus/serbuk ukuran zat padat, semakin besar bidang sentuh antar reaktan, memperbanyak peluang tumbukan.
+                            </p>
+                        </div>
+
+                        <div class="p-5 rounded-xl bg-amber-50 border border-amber-200 space-y-2">
+                            <div class="w-9 h-9 rounded-lg bg-amber-600 text-white flex items-center justify-center font-bold text-sm">3</div>
+                            <h4 class="font-bold text-sm text-amber-900">Suhu / Temperatur</h4>
+                            <p class="text-xs text-amber-800 leading-relaxed">
+                                Kenaikan suhu meningkatkan energi kinetik partikel sehingga gerak partikel makin cepat dan melampaui $E_a$.
+                            </p>
+                        </div>
+
+                        <div class="p-5 rounded-xl bg-purple-50 border border-purple-200 space-y-2">
+                            <div class="w-9 h-9 rounded-lg bg-purple-600 text-white flex items-center justify-center font-bold text-sm">4</div>
+                            <h4 class="font-bold text-sm text-purple-900">Katalisator</h4>
+                            <p class="text-xs text-purple-800 leading-relaxed">
+                                Katalis mempercepat reaksi dengan memberi jalur alternatif yang memiliki Energi Aktivasi ($E_a$) lebih rendah.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub Materi 4: Persamaan & Orde Reaksi -->
+            <div id="materi-4" class="sub-materi-content hidden space-y-6">
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4">
+                    <h3 class="text-xl font-bold text-brand-900 flex items-center gap-2">
+                        <i class="fa-solid fa-calculator text-indigo-600"></i> Persamaan Laju Reaksi & Orde Reaksi
+                    </h3>
+                    <p class="text-sm text-slate-700 leading-relaxed">
+                        Secara matematis, hubungan antara laju reaksi dengan konsentrasi reaktan dinyatakan dalam bentuk persamaan:
+                    </p>
+
+                    <div class="p-4 bg-slate-900 text-white rounded-xl text-center shadow-inner font-mono text-base sm:text-lg">
+                        v = k · [A]<sup>x</sup> · [B]<sup>y</sup>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-600">
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                            <strong>v</strong> = Laju Reaksi ($M/s$)
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                            <strong>k</strong> = Konstanta Laju Reaksi
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                            <strong>x, y</strong> = Orde Reaksi terhadap A & B
+                        </div>
+                    </div>
+
+                    <!-- Grafik Orde Reaksi Canvas -->
+                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-sm text-slate-800 mb-3 text-center">Grafik Karakteristik Orde Reaksi (Orde 0, 1, 2)</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <canvas id="orde0Canvas" width="220" height="150" class="bg-white rounded border border-slate-200 mx-auto"></canvas>
+                            <canvas id="orde1Canvas" width="220" height="150" class="bg-white rounded border border-slate-200 mx-auto"></canvas>
+                            <canvas id="orde2Canvas" width="220" height="150" class="bg-white rounded border border-slate-200 mx-auto"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub Materi 5: Penerapan Sehari-hari -->
+            <div id="materi-5" class="sub-materi-content hidden space-y-6">
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4">
+                    <h3 class="text-xl font-bold text-brand-900 flex items-center gap-2">
+                        <i class="fa-solid fa-earth-americas text-teal-600"></i> Penerapan Laju Reaksi dalam Kehidupan Sehari-hari
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        <div class="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                            <div class="w-12 h-12 rounded-xl bg-blue-500 text-white flex items-center justify-center text-xl flex-shrink-0">
+                                <i class="fa-solid fa-snowflake"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-800">Menyimpan Makanan di Kulkas (Faktor Suhu)</h4>
+                                <p class="text-xs text-slate-600 mt-1">Suhu dingin memperlambat gerak molekul dan pembusukan oleh mikroorganisme.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                            <div class="w-12 h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center text-xl flex-shrink-0">
+                                <i class="fa-solid fa-fire"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-800">Memotong Kayu Jadi Kecil (Faktor Luas Permukaan)</h4>
+                                <p class="text-xs text-slate-600 mt-1">Kayu berbentuk ranting kecil memiliki luas bidang sentuh besar sehingga lebih mudah terbakar.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                            <div class="w-12 h-12 rounded-xl bg-purple-500 text-white flex items-center justify-center text-xl flex-shrink-0">
+                                <i class="fa-solid fa-car-side"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-800">Catalytic Converter Kendaraan (Faktor Katalis)</h4>
+                                <p class="text-xs text-slate-600 mt-1">Menggunakan platinum/paladium untuk mempercepat pengubahan gas beracun (CO) menjadi aman ($CO_2$).</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-xl flex-shrink-0">
+                                <i class="fa-solid fa-vial-circle-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-800">Penggunaan Pemutih Pakaian (Faktor Konsentrasi)</h4>
+                                <p class="text-xs text-slate-600 mt-1">Pemutih pekat memudarkan noda jauh lebih cepat dibanding pemutih yang terlalu encer.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= LABORATORIUM VIRTUAL ================= -->
+        <section id="tab-lab" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                <div class="flex flex-wrap justify-between items-center gap-4 mb-4">
+                    <div>
+                        <span class="text-emerald-600 font-bold text-xs uppercase tracking-wider"><i class="fa-solid fa-flask"></i> Laboratorium Virtual Interaktif</span>
+                        <h2 class="text-2xl font-extrabold text-slate-900">Simulasi Eksperimen Laju Reaksi</h2>
+                        <p class="text-xs text-slate-500 mt-1">Atur variabel percobaan di bawah dan amati gerakan tumbukan molekul serta waktu reaksi.</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="btnStartLab" onclick="startLabSimulation()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow">
+                            <i class="fa-solid fa-play"></i> Mulai Reaksi
+                        </button>
+                        <button id="btnPauseLab" onclick="pauseLabSimulation()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow" disabled>
+                            <i class="fa-solid fa-pause"></i> Jeda
+                        </button>
+                        <button onclick="resetLabSimulation()" class="bg-slate-600 hover:bg-slate-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow">
+                            <i class="fa-solid fa-rotate-left"></i> Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Lab Layout Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    <!-- Left Column: Controls (4 cols) -->
+                    <div class="lg:col-span-4 bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-5">
+                        <h3 class="font-bold text-slate-800 text-sm border-b border-slate-200 pb-2"><i class="fa-solid fa-sliders text-brand-600"></i> Kontrol Variabel Reaksi</h3>
+
+                        <!-- 1. Slider Konsentrasi -->
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-semibold">
+                                <label for="labKonsentrasi" class="text-slate-700">Konsentrasi Reaktan [A]:</label>
+                                <span id="valKonsentrasi" class="text-brand-600 font-bold">10 Partikel</span>
+                            </div>
+                            <input type="range" id="labKonsentrasi" min="5" max="30" value="10" step="5" class="w-full accent-brand-600" oninput="updateLabControls()">
+                        </div>
+
+                        <!-- 2. Slider Suhu -->
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-semibold">
+                                <label for="labSuhu" class="text-slate-700">Suhu Reaksi (°C):</label>
+                                <span id="valSuhu" class="text-amber-600 font-bold">25 °C</span>
+                            </div>
+                            <input type="range" id="labSuhu" min="10" max="90" value="25" step="5" class="w-full accent-amber-500" oninput="updateLabControls()">
+                        </div>
+
+                        <!-- 3. Luas Permukaan Radio -->
+                        <div class="space-y-1">
+                            <label class="text-xs font-semibold text-slate-700 block">Luas Permukaan / Ukuran Zat:</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 text-xs cursor-pointer">
+                                    <input type="radio" name="labLuas" value="bongkahan" onchange="updateLabControls()"> Bongkahan
+                                </label>
+                                <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 text-xs cursor-pointer">
+                                    <input type="radio" name="labLuas" value="serbuk" checked onchange="updateLabControls()"> Serbuk Halus
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 4. Toggle Katalis -->
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-purple-50 border border-purple-200">
+                            <div>
+                                <span class="font-bold text-xs text-purple-900 block">Tambahkan Katalis</span>
+                                <span class="text-[10px] text-purple-700">Menurunkan $E_a$ (efisiensi tumbukan)</span>
+                            </div>
+                            <input type="checkbox" id="labKatalis" class="w-5 h-5 accent-purple-600 rounded cursor-pointer" onchange="updateLabControls()">
+                        </div>
+
+                        <!-- Panel Real-time Meter -->
+                        <div class="pt-2 border-t border-slate-200 space-y-2 text-xs">
+                            <div class="flex justify-between p-2 bg-white rounded-lg border border-slate-200">
+                                <span><i class="fa-regular fa-clock text-slate-500"></i> Waktu Reaksi:</span>
+                                <strong id="labTimer" class="font-mono text-slate-900">00:00 s</strong>
+                            </div>
+                            <div class="flex justify-between p-2 bg-white rounded-lg border border-slate-200">
+                                <span><i class="fa-solid fa-bolt text-amber-500"></i> Tumbukan Efektif/dtk:</span>
+                                <strong id="labCollisions" class="font-mono text-emerald-600">0</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Canvas Particle Animation & Real-time Chart (8 cols) -->
+                    <div class="lg:col-span-8 space-y-4">
+                        <!-- Canvas Wadah Reaksi -->
+                        <div class="relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-inner flex flex-col items-center">
+                            <div class="w-full bg-slate-800/80 px-4 py-2 text-white text-xs font-semibold flex justify-between items-center">
+                                <span><i class="fa-solid fa-flask-vial text-emerald-400"></i> Bejana Reaksi Simulasional</span>
+                                <span id="labStatusBadge" class="bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded text-[10px]">Siap Diputar</span>
+                            </div>
+                            <canvas id="simCanvas" width="600" height="280" class="w-full h-[280px] bg-slate-950"></canvas>
+                        </div>
+
+                        <!-- Real-time Chart Canvas -->
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                            <h4 class="font-bold text-xs text-slate-700 mb-2">Grafik Real-time Konsentrasi vs Waktu</h4>
+                            <div class="h-[160px] w-full">
+                                <canvas id="realtimeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabel Data Hasil Experiment -->
+                <div class="mt-8 pt-6 border-t border-slate-200 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-table text-brand-600"></i> Tabel Hasil Percobaan Lab Virtual</h3>
+                        <button onclick="clearLabTable()" class="text-xs text-red-600 hover:underline font-semibold">Bersihkan Tabel</button>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                    <th class="p-3">No</th>
+                                    <th class="p-3">Konsentrasi [A]</th>
+                                    <th class="p-3">Suhu (°C)</th>
+                                    <th class="p-3">Luas Permukaan</th>
+                                    <th class="p-3">Katalis</th>
+                                    <th class="p-3">Waktu Reaksi (s)</th>
+                                    <th class="p-3">Laju Reaksi Relative</th>
+                                </tr>
+                            </thead>
+                            <tbody id="labTableBody" class="divide-y divide-slate-200 bg-white">
+                                <!-- Dynamic Rows -->
+                                <tr>
+                                    <td colspan="7" class="p-4 text-center text-slate-400 italic">Belum ada data percobaan diselesaikan. Klik "Mulai Reaksi" di atas.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= MENU VIDEO PEMBELAJARAN ================= -->
+        <section id="tab-video" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-6">
+                <div>
+                    <span class="text-brand-600 font-bold text-xs uppercase tracking-wider"><i class="fa-solid fa-circle-play"></i> Video Suplementar</span>
+                    <h2 class="text-2xl font-extrabold text-slate-900">Video Visualisasi Laju Reaksi & Teori Tumbukan</h2>
+                    <p class="text-xs text-slate-500 mt-1">Simak penjelasan eksperimen dan simulasi molekuler berikut untuk memperdalam pemahaman konsep.</p>
+                </div>
+
+                <!-- Video Container / Embedded Video Player -->
+                <div class="max-w-3xl mx-auto rounded-2xl overflow-hidden shadow-xl bg-black border border-slate-800 aspect-video relative flex items-center justify-center">
+                    <iframe class="w-full h-full" src="https://www.youtube-nocookie.com/embed/Ott8k8d3_20" title="Video Pembelajaran Laju Reaksi" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+
+                <!-- Penjelasan Sebelum & Sesudah Video -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div class="p-4 rounded-xl bg-blue-50 border border-blue-200 space-y-1">
+                        <h4 class="font-bold text-blue-900"><i class="fa-solid fa-circle-info text-blue-600"></i> Fokus Pengamatan Sebelum Menonton:</h4>
+                        <p class="text-blue-800">Perhatikan bagaimana orientasi molekul dan energi kinetik memengaruhi keberhasilan suatu reaksi kimia.</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 space-y-1">
+                        <h4 class="font-bold text-emerald-900"><i class="fa-solid fa-check-double text-emerald-600"></i> Rangkuman Setelah Menonton:</h4>
+                        <p class="text-emerald-800">Katalis menurunkan Energi Aktivasi ($E_a$), sedangkan kenaikan suhu meningkatkan jumlah molekul yang melampaui $E_a$.</p>
+                    </div>
+                </div>
+
+                <!-- Pertanyaan Refleksi Video Interaktif -->
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                    <h3 class="font-bold text-slate-800 text-sm"><i class="fa-solid fa-circle-question text-brand-600"></i> Pertanyaan Refleksi Video</h3>
+                    <p class="text-xs text-slate-600">Berdasarkan tayangan video di atas, jelaskan dengan singkat perbedaan tumbukan efektif dan tumbukan tidak efektif!</p>
+                    <textarea id="videoReflectionInput" rows="3" class="w-full p-3 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-brand-500 focus:outline-none" placeholder="Tuliskan pemahamanmu di sini..."></textarea>
+                    <button onclick="submitVideoReflection()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow">
+                        Kirim Jawaban Refleksi
+                    </button>
+                    <div id="videoReflectionFeedback" class="hidden p-3 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-semibold">
+                        <i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> Jawaban refleksi telah tersimpan! Ibu Sarkia Silawane mengapresiasi keaktifanmu.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= MENU LATIHAN SOAL INTERAKTIF ================= -->
+        <section id="tab-latihan" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-6">
+                <div>
+                    <span class="text-brand-600 font-bold text-xs uppercase tracking-wider"><i class="fa-solid fa-pen-to-square"></i> Uji Pemahaman Mandiri</span>
+                    <h2 class="text-2xl font-extrabold text-slate-900">Latihan Soal Interaktif Multi-Tipe</h2>
+                    <p class="text-xs text-slate-500 mt-1">Jawab pertanyaan-pertanyaan di bawah dan dapatkan umpan balik beserta pembahasannya secara langsung.</p>
+                </div>
+
+                <!-- Card Question 1: PG -->
+                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="bg-brand-100 text-brand-700 px-2.5 py-0.5 rounded text-[11px] font-bold">Soal 1 (Pilihan Ganda)</span>
+                        <span class="text-xs text-slate-400">Konsep Faktor Suhu</span>
+                    </div>
+                    <p class="text-xs sm:text-sm font-semibold text-slate-800">Mengapa daging yang disimpan dalam lemari es (kulkas) tidak cepat membusuk?</p>
+                    <div class="space-y-2 text-xs">
+                        <label class="flex items-center gap-2 p-2.5 rounded-lg bg-white border border-slate-200 cursor-pointer hover:bg-brand-50 transition">
+                            <input type="radio" name="lat1" value="A" onchange="checkLatihan1(this.value)"> A. Suhu rendah menurunkan energi kinetik mikroorganisme sehingga laju reaksi pembusukan melambat.
+                        </label>
+                        <label class="flex items-center gap-2 p-2.5 rounded-lg bg-white border border-slate-200 cursor-pointer hover:bg-brand-50 transition">
+                            <input type="radio" name="lat1" value="B" onchange="checkLatihan1(this.value)"> B. Suhu rendah meningkatkan Energi Aktivasi ($E_a$).
+                        </label>
+                        <label class="flex items-center gap-2 p-2.5 rounded-lg bg-white border border-slate-200 cursor-pointer hover:bg-brand-50 transition">
+                            <input type="radio" name="lat1" value="C" onchange="checkLatihan1(this.value)"> C. Konsentrasi oksigen di dalam kulkas habis.
+                        </label>
+                    </div>
+                    <div id="fbLat1" class="hidden p-3 rounded-lg text-xs font-semibold"></div>
+                </div>
+
+                <!-- Card Question 2: Benar / Salah -->
+                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded text-[11px] font-bold">Soal 2 (Benar / Salah)</span>
+                        <span class="text-xs text-slate-400">Teori Katalis</span>
+                    </div>
+                    <p class="text-xs sm:text-sm font-semibold text-slate-800">"Katalis bereaksi dengan reaktan untuk membentuk produk dan habis terpakai di akhir reaksi."</p>
+                    <div class="flex gap-4 text-xs">
+                        <button onclick="checkLatihan2(true)" class="px-5 py-2 rounded-lg bg-white border border-slate-300 font-bold hover:bg-emerald-50 hover:border-emerald-500 transition">BENAR</button>
+                        <button onclick="checkLatihan2(false)" class="px-5 py-2 rounded-lg bg-white border border-slate-300 font-bold hover:bg-red-50 hover:border-red-500 transition">SALAH</button>
+                    </div>
+                    <div id="fbLat2" class="hidden p-3 rounded-lg text-xs font-semibold"></div>
+                </div>
+
+                <!-- Card Question 3: Menjodohkan / Seleksi -->
+                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded text-[11px] font-bold">Soal 3 (Analisis Fenomena)</span>
+                        <span class="text-xs text-slate-400">Luas Permukaan</span>
+                    </div>
+                    <p class="text-xs sm:text-sm font-semibold text-slate-800">Manakah yang larut lebih cepat dalam air: Gula Jawa Bongkahan atau Gula Pasir Halus?</p>
+                    <div class="flex gap-3 text-xs">
+                        <button onclick="checkLatihan3('pasir')" class="px-4 py-2 rounded-lg bg-white border border-slate-300 font-bold hover:bg-amber-50 hover:border-amber-500 transition">Gula Pasir Halus</button>
+                        <button onclick="checkLatihan3('bongkahan')" class="px-4 py-2 rounded-lg bg-white border border-slate-300 font-bold hover:bg-amber-50 hover:border-amber-500 transition">Gula Jawa Bongkahan</button>
+                    </div>
+                    <div id="fbLat3" class="hidden p-3 rounded-lg text-xs font-semibold"></div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= MENU EVALUASI (20 SOAL) ================= -->
+        <section id="tab-evaluasi" class="tab-content hidden space-y-6">
+            <!-- Form Identitas Sebelum Evaluasi -->
+            <div id="evaluasiFormCard" class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-6 max-w-xl mx-auto">
+                <div class="text-center space-y-2">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center mx-auto text-2xl shadow-lg shadow-amber-500/30">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <h2 class="text-2xl font-extrabold text-slate-900">Evaluasi Hasil Belajar</h2>
+                    <p class="text-xs text-slate-500">Ujian Berbasis 20 Soal Pilihan Ganda (HOTS & LOTS). Masukkan identitas sebelum memulai.</p>
+                </div>
+
+                <form onsubmit="startEvaluasiExam(event)" class="space-y-4 text-xs">
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">Nama Lengkap Siswa <span class="text-red-500">*</span></label>
+                        <input type="text" id="evalNama" required class="w-full p-3 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-brand-500 focus:outline-none" placeholder="Contoh: Ahmad Silawane">
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">Kelas <span class="text-red-500">*</span></label>
+                        <select id="evalKelas" required class="w-full p-3 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            <option value="">-- Pilih Kelas --</option>
+                            <option value="XI IPA 1">XI IPA 1 - SMAN 46 Maluku Tengah</option>
+                            <option value="XI IPA 2">XI IPA 2 - SMAN 46 Maluku Tengah</option>
+                            <option value="Fase F1">Fase F1 - SMAN 46 Maluku Tengah</option>
+                            <option value="Fase F2">Fase F2 - SMAN 46 Maluku Tengah</option>
+                        </select>
+                    </div>
+                    <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-800 text-[11px] space-y-1">
+                        <p><strong>Ketentuan Ujian:</strong></p>
+                        <ul class="list-disc list-inside space-y-0.5">
+                            <li>Jumlah Soal: 20 Butir (Pilihan A, B, C, D, E)</li>
+                            <li>Batas KKM Ketuntasan: <strong>75</strong></li>
+                            <li>Waktu pengerjaan dicatat secara otomatis.</li>
+                        </ul>
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold py-3.5 rounded-xl text-sm shadow-md transition transform active:scale-95">
+                        Mulai Tes Evaluasi
+                    </button>
+                </form>
+            </div>
+
+            <!-- Quiz Container (Active during test) -->
+            <div id="evaluasiExamContainer" class="hidden space-y-6">
+                <!-- Exam Top Info Bar -->
+                <div class="bg-slate-900 text-white rounded-2xl p-4 sm:p-6 shadow-md flex flex-wrap justify-between items-center gap-4">
+                    <div>
+                        <h3 id="examSiswaInfo" class="font-bold text-sm sm:text-base text-emerald-400">Nama Siswa | Kelas</h3>
+                        <p class="text-xs text-slate-300">SMAN 46 Maluku Tengah - Evaluasi Laju Reaksi</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 text-xs font-mono text-amber-300">
+                            <i class="fa-regular fa-clock mr-1"></i> <span id="examTimerDisplay">00:00</span>
+                        </div>
+                        <button onclick="submitEvaluasiExam()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow">
+                            Kirim Jawaban <i class="fa-solid fa-paper-plane ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Soal & Navigation Layout -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Left: Current Question (8 cols) -->
+                    <div class="lg:col-span-8 bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-5">
+                        <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                            <span id="qNumberBadge" class="bg-brand-100 text-brand-800 font-extrabold px-3 py-1 rounded-lg text-xs">Soal No. 1 dari 20</span>
+                            <span id="qDifficultyBadge" class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-slate-100 text-slate-600">Mudah</span>
+                        </div>
+
+                        <p id="qText" class="text-sm sm:text-base font-semibold text-slate-800 leading-relaxed">
+                            Teks soal akan dimuat di sini...
+                        </p>
+
+                        <!-- Choices A-E -->
+                        <div id="qOptionsContainer" class="space-y-2.5 text-xs sm:text-sm">
+                            <!-- Injected by JS -->
+                        </div>
+
+                        <!-- Prev / Next / Ragu Buttons -->
+                        <div class="flex flex-wrap justify-between items-center pt-4 border-t border-slate-100 gap-2">
+                            <button onclick="prevQuestion()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-1">
+                                <i class="fa-solid fa-chevron-left"></i> Sebelumnya
+                            </button>
+                            <label class="flex items-center gap-2 text-xs text-amber-700 font-semibold cursor-pointer">
+                                <input type="checkbox" id="raguCheckbox" onchange="toggleRaguCurrent()" class="accent-amber-500 w-4 h-4 rounded">
+                                Ragu-Ragu
+                            </label>
+                            <button onclick="nextQuestion()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs flex items-center gap-1">
+                                Selanjutnya <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Number Grid Palette (4 cols) -->
+                    <div class="lg:col-span-4 bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
+                        <h4 class="font-bold text-slate-800 text-xs">Navigasi Nomor Soal</h4>
+                        <div id="numberGrid" class="grid grid-cols-5 gap-2">
+                            <!-- 20 Number Buttons -->
+                        </div>
+                        <div class="pt-3 border-t border-slate-100 text-[11px] space-y-1 text-slate-500">
+                            <div class="flex items-center gap-2"><span class="w-3 h-3 bg-brand-600 rounded"></span> Dijawab</div>
+                            <div class="flex items-center gap-2"><span class="w-3 h-3 bg-amber-400 rounded"></span> Ragu-ragu</div>
+                            <div class="flex items-center gap-2"><span class="w-3 h-3 bg-slate-200 rounded"></span> Belum Diisi</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HALAMAN HASIL EVALUASI LENGKAP -->
+            <div id="evaluasiResultContainer" class="hidden space-y-6">
+                <!-- Result Summary Banner -->
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 text-center space-y-4 max-w-3xl mx-auto">
+                    <div id="resultStatusIcon" class="w-20 h-20 rounded-full flex items-center justify-center mx-auto text-3xl">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <div>
+                        <h3 id="resultSiswaTitle" class="text-2xl font-extrabold text-slate-900">Nama Siswa</h3>
+                        <p id="resultSiswaSub" class="text-xs text-slate-500">Kelas XI IPA | SMAN 46 Maluku Tengah</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                            <span class="text-[10px] text-slate-500 block uppercase font-bold">Skor Akhir</span>
+                            <span id="resSkor" class="text-2xl font-black text-brand-600">0</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                            <span class="text-[10px] text-emerald-700 block uppercase font-bold">Jawaban Benar</span>
+                            <span id="resBenar" class="text-2xl font-black text-emerald-600">0</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-red-50 border border-red-200">
+                            <span class="text-[10px] text-red-700 block uppercase font-bold">Jawaban Salah</span>
+                            <span id="resSalah" class="text-2xl font-black text-red-600">0</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
+                            <span class="text-[10px] text-amber-700 block uppercase font-bold">Ketuntasan</span>
+                            <span id="resStatus" class="text-xs font-bold text-amber-800 block mt-1">Tuntas</span>
+                        </div>
+                    </div>
+
+                    <!-- Rekomendasi Modul Remedial -->
+                    <div id="resRekomendasiCard" class="p-4 rounded-xl bg-brand-50 border border-brand-200 text-left space-y-1 text-xs text-brand-900">
+                        <strong class="font-bold block text-sm text-brand-800"><i class="fa-solid fa-lightbulb"></i> Rekomendasi Belajar Kembali:</strong>
+                        <p id="resRekomendasiText">Lakukan peninjauan materi tentang Persamaan Laju Reaksi.</p>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center gap-3 pt-2">
+                        <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-print"></i> Cetak / Simpan Hasil
+                        </button>
+                        <button onclick="resetEvaluasiExam()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-rotate-right"></i> Ulangi Evaluasi
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Pembahasan 20 Soal Detail -->
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4">
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                        <i class="fa-solid fa-list-ol text-brand-600"></i> Pembahasan Detail 20 Soal Evaluasi
+                    </h3>
+                    <div id="pembahasanListContainer" class="space-y-4">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= MENU REFLEKSI ================= -->
+        <section id="tab-refleksi" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 max-w-2xl mx-auto space-y-6">
+                <div class="text-center space-y-2">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-500 text-white flex items-center justify-center mx-auto text-2xl shadow-lg shadow-emerald-500/30">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                    <h2 class="text-2xl font-extrabold text-slate-900">Jurnal Refleksi Peserta Didik</h2>
+                    <p class="text-xs text-slate-500">Ungkapkan pengalaman belajar dan umpan balik terhadap media pembelajaran ini.</p>
+                </div>
+
+                <form onsubmit="submitRefleksiForm(event)" class="space-y-4 text-xs">
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">1. Pengetahuan baru apa yang kamu peroleh dari materi Laju Reaksi?</label>
+                        <textarea required rows="2" class="w-full p-3 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Tuliskan pengetahuan baru..."></textarea>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">2. Sub-materi mana yang menurutmu paling mudah dipahami?</label>
+                        <input type="text" required class="w-full p-3 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Contoh: Faktor Suhu & Luas Permukaan">
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">3. Bagian mana yang menurutmu masih sulit dipahami?</label>
+                        <input type="text" required class="w-full p-3 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Contoh: Menentukan Orde Reaksi dari Data Eksperimen">
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">4. Contoh penerapan laju reaksi apa yang paling menarik dalam kehidupan sehari-hari?</label>
+                        <textarea required rows="2" class="w-full p-3 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Tuliskan contoh fenomena..."></textarea>
+                    </div>
+
+                    <!-- Rating Bintang -->
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-2">Penilaian / Rating Pengalaman Menggunakan Media Ini:</label>
+                        <div class="flex gap-2 text-2xl text-amber-400 cursor-pointer justify-center" id="starRatingGroup">
+                            <i class="fa-solid fa-star" onclick="setRating(1)"></i>
+                            <i class="fa-solid fa-star" onclick="setRating(2)"></i>
+                            <i class="fa-solid fa-star" onclick="setRating(3)"></i>
+                            <i class="fa-solid fa-star" onclick="setRating(4)"></i>
+                            <i class="fa-solid fa-star" onclick="setRating(5)"></i>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-3.5 rounded-xl text-sm shadow-md transition transform active:scale-95">
+                        Kirim Refleksi Pembelajaran
+                    </button>
+                </form>
+
+                <div id="refleksiSuccessFeedback" class="hidden p-4 rounded-xl bg-emerald-100 border border-emerald-300 text-center space-y-2">
+                    <h4 class="font-bold text-emerald-900 text-sm"><i class="fa-solid fa-circle-check text-emerald-600"></i> Terima Kasih Atas Refleksimu!</h4>
+                    <p class="text-xs text-emerald-800">"Setiap langkah eksplorasi pengetahuan membawamu lebih dekat menuju keberhasilan." <br>— <strong>Sarkia Silawane, S.Pd. (SMAN 46 Maluku Tengah)</strong></p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p>© 2026 <strong>KIMIA INTERAKTIF - LAJU REAKSI</strong>. SMAN 46 Maluku Tengah.</p>
+            <p class="text-slate-500">Disusun oleh: <strong class="text-slate-300">Sarkia Silawane, S.Pd.</strong> | Kurikulum Merdeka Fase F Kelas XI SMA</p>
+        </div>
+    </footer>
+
+
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
+    <script>
+        /* --- NAVIGATION & TAB SWITCHING --- */
+        const tabs = ['beranda', 'cptp', 'materi', 'lab', 'video', 'latihan', 'evaluasi', 'refleksi'];
+        
+        function switchTab(tabId) {
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                if (el) el.classList.add('hidden');
+            });
+            const activeEl = document.getElementById(`tab-${tabId}`);
+            if (activeEl) activeEl.classList.remove('hidden');
+
+            // Update tab button UI
+            document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+                if (tabs[idx] === tabId) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Update Progress Bar
+            const idx = tabs.indexOf(tabId);
+            const progressPct = ((idx + 1) / tabs.length) * 100;
+            document.getElementById('globalProgressBar').style.width = `${progressPct}%`;
+
+            // Draw canvases when tab is visible
+            if (tabId === 'materi') drawMateriCanvases();
+            if (tabId === 'lab') initLabVirtual();
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function switchSubMateri(subId) {
+            document.querySelectorAll('.sub-materi-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(subId).classList.remove('hidden');
+
+            const btns = document.querySelectorAll('.sub-tab-btn');
+            btns.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        /* --- HERO CANVAS ANIMATION --- */
+        const heroCanvas = document.getElementById('heroCanvas');
+        const heroCtx = heroCanvas ? heroCanvas.getContext('2d') : null;
+        let heroParticles = [];
+
+        function initHeroCanvas() {
+            if (!heroCanvas) return;
+            heroCanvas.width = heroCanvas.parentElement.clientWidth;
+            heroCanvas.height = heroCanvas.parentElement.clientHeight;
+
+            heroParticles = [];
+            for (let i = 0; i < 35; i++) {
+                heroParticles.push({
+                    x: Math.random() * heroCanvas.width,
+                    y: Math.random() * heroCanvas.height,
+                    radius: Math.random() * 4 + 2,
+                    dx: (Math.random() - 0.5) * 1.5,
+                    dy: (Math.random() - 0.5) * 1.5,
+                    color: Math.random() > 0.5 ? '#3b82f6' : '#10b981'
+                });
+            }
+        }
+
+        function animateHero() {
+            if (!heroCtx) return;
+            heroCtx.clearRect(0, 0, heroCanvas.width, heroCanvas.height);
+            
+            heroParticles.forEach(p => {
+                p.x += p.dx;
+                p.y += p.dy;
+
+                if (p.x < 0 || p.x > heroCanvas.width) p.dx *= -1;
+                if (p.y < 0 || p.y > heroCanvas.height) p.dy *= -1;
+
+                heroCtx.beginPath();
+                heroCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                heroCtx.fillStyle = p.color;
+                heroCtx.fill();
+            });
+
+            requestAnimationFrame(animateHero);
+        }
+
+        /* --- MATERI CANVASES DRAWING --- */
+        function drawMateriCanvases() {
+            // 1. Grafik Konsep Laju
+            const cv1 = document.getElementById('materiGrafikCanvas');
+            if (cv1) {
+                const ctx = cv1.getContext('2d');
+                ctx.clearRect(0,0,320,180);
+                
+                // Axes
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(30, 20); ctx.lineTo(30, 150); ctx.lineTo(300, 150);
+                ctx.stroke();
+
+                // Reaktan Curve (Red)
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(30, 30);
+                ctx.quadraticCurveTo(100, 140, 290, 145);
+                ctx.stroke();
+
+                // Produk Curve (Green)
+                ctx.strokeStyle = '#10b981';
+                ctx.beginPath();
+                ctx.moveTo(30, 145);
+                ctx.quadraticCurveTo(100, 40, 290, 35);
+                ctx.stroke();
+            }
+
+            // 2. Diagram Energi Eksoterm & Endoterm
+            const drawDiagram = (id, type) => {
+                const cv = document.getElementById(id);
+                if (!cv) return;
+                const ctx = cv.getContext('2d');
+                ctx.clearRect(0,0,300,160);
+
+                ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(30,20); ctx.lineTo(30,140); ctx.lineTo(280,140); ctx.stroke();
+
+                ctx.strokeStyle = type === 'ekso' ? '#3b82f6' : '#f59e0b';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                if (type === 'ekso') {
+                    ctx.moveTo(30, 70);
+                    ctx.bezierCurveTo(90, 10, 130, 10, 180, 70);
+                    ctx.lineTo(280, 110);
+                } else {
+                    ctx.moveTo(30, 110);
+                    ctx.bezierCurveTo(90, 20, 130, 20, 180, 70);
+                    ctx.lineTo(280, 60);
+                }
+                ctx.stroke();
+
+                ctx.fillStyle = '#475569'; ctx.font = '10px sans-serif';
+                ctx.fillText(type === 'ekso' ? 'Diagram Eksoterm (ΔH < 0)' : 'Diagram Endoterm (ΔH > 0)', 60, 155);
+            };
+            drawDiagram('diagramEksotermCanvas', 'ekso');
+            drawDiagram('diagramEndotermCanvas', 'endo');
+
+            // 3. Grafik Orde 0, 1, 2
+            const drawOrde = (id, title, type) => {
+                const cv = document.getElementById(id);
+                if (!cv) return;
+                const ctx = cv.getContext('2d');
+                ctx.clearRect(0,0,220,150);
+
+                ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(25,15); ctx.lineTo(25,125); ctx.lineTo(200,125); ctx.stroke();
+
+                ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                if (type === 0) { ctx.moveTo(25, 75); ctx.lineTo(190, 75); }
+                else if (type === 1) { ctx.moveTo(25, 115); ctx.lineTo(190, 30); }
+                else if (type === 2) { ctx.moveTo(25, 120); ctx.quadraticCurveTo(100, 110, 190, 25); }
+                ctx.stroke();
+
+                ctx.fillStyle = '#1e293b'; ctx.font = '11px sans-serif';
+                ctx.fillText(title, 50, 142);
+            };
+            drawOrde('orde0Canvas', 'Orde 0 (Laju Tetap)', 0);
+            drawOrde('orde1Canvas', 'Orde 1 (Linear)', 1);
+            drawOrde('orde2Canvas', 'Orde 2 (Kuadratik)', 2);
+        }
+
+        /* --- LABORATORIUM VIRTUAL SIMULATION LOGIC --- */
+        let simCanvas, simCtx;
+        let labParticles = [];
+        let labRunning = false;
+        let labTimerVal = 0;
+        let labTimerInterval = null;
+        let labCollisionsCount = 0;
+        let labChart = null;
+        let expCount = 0;
+
+        function initLabVirtual() {
+            simCanvas = document.getElementById('simCanvas');
+            if (!simCanvas) return;
+            simCtx = simCanvas.getContext('2d');
+            
+            // Setup Realtime Chart
+            const chartCtx = document.getElementById('realtimeChart').getContext('2d');
+            if (!labChart) {
+                labChart = new Chart(chartCtx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [
+                            { label: 'Reaktan A', data: [], borderColor: '#ef4444', borderWidth: 2, fill: false },
+                            { label: 'Produk B', data: [], borderColor: '#10b981', borderWidth: 2, fill: false }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: false,
+                        scales: { x: { display: true }, y: { min: 0, max: 30 } }
+                    }
+                });
+            }
+            resetLabSimulation();
+        }
+
+        function updateLabControls() {
+            const n = document.getElementById('labKonsentrasi').value;
+            const temp = document.getElementById('labSuhu').value;
+            document.getElementById('valKonsentrasi').innerText = `${n} Partikel`;
+            document.getElementById('valSuhu').innerText = `${temp} °C`;
+        }
+
+        function resetLabSimulation() {
+            labRunning = false;
+            clearInterval(labTimerInterval);
+            labTimerVal = 0;
+            labCollisionsCount = 0;
+            document.getElementById('labTimer').innerText = '00:00 s';
+            document.getElementById('labCollisions').innerText = '0';
+            document.getElementById('labStatusBadge').innerText = 'Siap Diputar';
+            document.getElementById('btnStartLab').disabled = false;
+            document.getElementById('btnPauseLab').disabled = true;
+
+            const n = parseInt(document.getElementById('labKonsentrasi').value);
+            labParticles = [];
+            for (let i = 0; i < n; i++) {
+                labParticles.push({
+                    x: Math.random() * (simCanvas.width - 40) + 20,
+                    y: Math.random() * (simCanvas.height - 40) + 20,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    type: 'reaktan' // 'reaktan' or 'produk'
+                });
+            }
+            drawLabFrame();
+            if (labChart) {
+                labChart.data.labels = [0];
+                labChart.data.datasets[0].data = [n];
+                labChart.data.datasets[1].data = [0];
+                labChart.update();
+            }
+        }
+
+        function startLabSimulation() {
+            if (labRunning) return;
+            labRunning = true;
+            document.getElementById('labStatusBadge').innerText = 'Reaksi Berjalan...';
+            document.getElementById('btnStartLab').disabled = true;
+            document.getElementById('btnPauseLab').disabled = false;
+
+            labTimerInterval = setInterval(() => {
+                labTimerVal += 0.5;
+                document.getElementById('labTimer').innerText = `${labTimerVal.toFixed(1)} s`;
+
+                // Update Chart Data
+                const reaktanCount = labParticles.filter(p => p.type === 'reaktan').length;
+                const produkCount = labParticles.filter(p => p.type === 'produk').length;
+                
+                labChart.data.labels.push(labTimerVal.toFixed(1));
+                labChart.data.datasets[0].data.push(reaktanCount);
+                labChart.data.datasets[1].data.push(produkCount);
+                labChart.update();
+
+                if (reaktanCount === 0) {
+                    finishLabSimulation();
+                }
+            }, 500);
+
+            requestAnimationFrame(runLabLoop);
+        }
+
+        function pauseLabSimulation() {
+            labRunning = false;
+            clearInterval(labTimerInterval);
+            document.getElementById('labStatusBadge').innerText = 'Dijeda';
+            document.getElementById('btnStartLab').disabled = false;
+            document.getElementById('btnPauseLab').disabled = true;
+        }
+
+        function finishLabSimulation() {
+            pauseLabSimulation();
+            document.getElementById('labStatusBadge').innerText = 'Selesai!';
+
+            // Log Data to Table
+            expCount++;
+            const conc = document.getElementById('labKonsentrasi').value;
+            const temp = document.getElementById('labSuhu').value;
+            const luas = document.querySelector('input[name="labLuas"]:checked').value;
+            const katalis = document.getElementById('labKatalis').checked ? 'Ya' : 'Tidak';
+            const rateRel = (conc / labTimerVal).toFixed(2);
+
+            const tbody = document.getElementById('labTableBody');
+            if (expCount === 1) tbody.innerHTML = ''; // clear default row
+
+            const row = `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-3 font-bold text-brand-700">#${expCount}</td>
+                    <td class="p-3">${conc} M</td>
+                    <td class="p-3">${temp} °C</td>
+                    <td class="p-3 capitalize">${luas}</td>
+                    <td class="p-3">${katalis}</td>
+                    <td class="p-3 font-semibold text-emerald-600">${labTimerVal.toFixed(1)} s</td>
+                    <td class="p-3 font-mono">${rateRel}</td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        }
+
+        function clearLabTable() {
+            expCount = 0;
+            document.getElementById('labTableBody').innerHTML = `
+                <tr><td colspan="7" class="p-4 text-center text-slate-400 italic">Belum ada data percobaan diselesaikan. Klik "Mulai Reaksi" di atas.</td></tr>
+            `;
+        }
+
+        function runLabLoop() {
+            if (!labRunning) return;
+            drawLabFrame();
+            updateLabParticles();
+            requestAnimationFrame(runLabLoop);
+        }
+
+        function updateLabParticles() {
+            const temp = parseFloat(document.getElementById('labSuhu').value);
+            const luas = document.querySelector('input[name="labLuas"]:checked').value;
+            const hasKatalis = document.getElementById('labKatalis').checked;
+
+            const speedFactor = (temp / 25) * (luas === 'serbuk' ? 1.4 : 0.8);
+            const reactionProb = (hasKatalis ? 0.08 : 0.03) * (temp / 30);
+
+            for (let i = 0; i < labParticles.length; i++) {
+                let p = labParticles[i];
+                p.x += p.vx * speedFactor;
+                p.y += p.vy * speedFactor;
+
+                if (p.x < 15 || p.x > simCanvas.width - 15) p.vx *= -1;
+                if (p.y < 15 || p.y > simCanvas.height - 15) p.vy *= -1;
+
+                // Collision detection between particles
+                for (let j = i + 1; j < labParticles.length; j++) {
+                    let p2 = labParticles[j];
+                    let dx = p2.x - p.x;
+                    let dy = p2.y - p.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 20) {
+                        // Collision occurred
+                        if (p.type === 'reaktan' && p2.type === 'reaktan') {
+                            if (Math.random() < reactionProb) {
+                                p.type = 'produk';
+                                p2.type = 'produk';
+                                labCollisionsCount++;
+                                document.getElementById('labCollisions').innerText = labCollisionsCount;
+                            }
+                        }
+                        p.vx *= -1; p2.vx *= -1;
+                    }
+                }
+            }
+        }
+
+        function drawLabFrame() {
+            simCtx.clearRect(0, 0, simCanvas.width, simCanvas.height);
+
+            labParticles.forEach(p => {
+                simCtx.beginPath();
+                simCtx.arc(p.x, p.y, p.type === 'reaktan' ? 8 : 10, 0, Math.PI * 2);
+                simCtx.fillStyle = p.type === 'reaktan' ? '#ef4444' : '#10b981';
+                simCtx.fill();
+                simCtx.strokeStyle = '#ffffff';
+                simCtx.lineWidth = 1.5;
+                simCtx.stroke();
+            });
+        }
+
+        /* --- VIDEO & LATIHAN INTERAKTIF LOGIC --- */
+        function submitVideoReflection() {
+            const val = document.getElementById('videoReflectionInput').value;
+            if (val.trim()) {
+                document.getElementById('videoReflectionFeedback').classList.remove('hidden');
+            }
+        }
+
+        function checkLatihan1(ans) {
+            const fb = document.getElementById('fbLat1');
+            fb.classList.remove('hidden');
+            if (ans === 'A') {
+                fb.className = 'p-3 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-800';
+                fb.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> BENAR! Suhu rendah memperlambat gerakan kinetik partikel sehingga laju reaksi pembusukan melambat.';
+            } else {
+                fb.className = 'p-3 rounded-lg text-xs font-semibold bg-red-100 text-red-800';
+                fb.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-600 mr-1"></i> Kurang Tepat. Ingat bahwa faktor suhu berkaitan erat dengan energi kinetik partikel.';
+            }
+        }
+
+        function checkLatihan2(val) {
+            const fb = document.getElementById('fbLat2');
+            fb.classList.remove('hidden');
+            if (!val) {
+                fb.className = 'p-3 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-800';
+                fb.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> BENAR! Katalisator tidak habis terpakai dan akan diperoleh kembali pada akhir reaksi.';
+            } else {
+                fb.className = 'p-3 rounded-lg text-xs font-semibold bg-red-100 text-red-800';
+                fb.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-600 mr-1"></i> SALAH. Katalisator hanya mempercepat reaksi tanpa ikut terkonsumsi secara permanen.';
+            }
+        }
+
+        function checkLatihan3(type) {
+            const fb = document.getElementById('fbLat3');
+            fb.classList.remove('hidden');
+            if (type === 'pasir') {
+                fb.className = 'p-3 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-800';
+                fb.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> BENAR! Gula pasir halus memiliki luas permukaan bidang sentuh yang jauh lebih besar daripada bongkahan.';
+            } else {
+                fb.className = 'p-3 rounded-lg text-xs font-semibold bg-red-100 text-red-800';
+                fb.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-600 mr-1"></i> Kurang Tepat. Bongkahan memiliki luas bidang sentuh yang lebih kecil sehingga lebih lambat larut.';
+            }
+        }
+
+        /* --- EVALUASI 20 SOAL DATA & LOGIC --- */
+        const evaluasiDatabase = [
+            { id: 1, q: "Laju reaksi didefinisikan sebagai...", opts: ["Bertambahnya reaktan per satuan waktu", "Berkurangnya konsentrasi reaktan atau bertambahnya produk per satuan waktu", "Jumlah mol zat hasil reaksi dikali waktu", "Volume total larutan yang bereaksi", "Energi aktivasi yang dibebaskan per detik"], ans: "B", diff: "Mudah", exp: "Laju reaksi mengukur perubahan konsentrasi zat per satuan waktu." },
+            { id: 2, q: "Kenaikan suhu akan mempercepat laju reaksi karena...", opts: ["Menurunkan energi aktivasi", "Meningkatkan energi kinetik molekul reaktan", "Memperbesar luas bidang sentuh", "Menambah jumlah mol zat reaktan", "Mengubah orde reaksi"], ans: "B", diff: "Mudah", exp: "Suhu tinggi membuat molekul bergerak lebih cepat (energi kinetik naik), meningkatkan tumbukan efektif." },
+            { id: 3, q: "Manakah di bawah ini yang merupakan fungsi utama katalis?", opts: ["Menambah jumlah hasil reaksi", "Meningkatkan perubahan entalpi reaksi", "Menurunkan Energi Aktivasi (Ea)", "Menaikkan suhu sistem reaksi", "Menghentikan reaksi secara mendadak"], ans: "C", diff: "Mudah", exp: "Katalis memberi jalur reaksi alternatif dengan energi aktivasi yang lebih rendah." },
+            { id: 4, q: "Zat berbentuk serbuk bereaksi lebih cepat dibanding bentuk bongkahan karena...", opts: ["Konsentrasinya lebih tinggi", "Energi aktivasi berkurang", "Luas permukaan bidang sentuhnya lebih besar", "Massa jenisnya lebih kecil", "Suhunya lebih hangat"], ans: "C", diff: "Mudah", exp: "Makin kecil ukuran partikel, makin luas bidang sentuhnya." },
+            { id: 5, q: "Jika persamaan laju reaksi v = k[A]²[B], maka orde total reaksi adalah...", opts: ["1", "2", "3", "4", "0"], ans: "C", diff: "Sedang", exp: "Orde total = pangkat [A] + pangkat [B] = 2 + 1 = 3." },
+            { id: 6, q: "Grafik hubungan antara konsentrasi reaktan dan laju reaksi pada orde nol berbentuk...", opts: ["Garis lurus naik", "Garis mendatar sejajar sumbu X", "Parabola naik", "Kurva hiperbola turun", "Garis eksponensial"], ans: "B", diff: "Sedang", exp: "Pada orde nol, perubahan konsentrasi tidak memengaruhi laju reaksi (v = k)." },
+            { id: 7, q: "Reaksi pembakaran kayu berbentuk kayu gelondongan vs kayu pasahan halus. Manakah faktor yang dominan?", opts: ["Katalisator", "Luas Permukaan", "Tekanan", "Warna zat", "Orde Reaksi"], ans: "B", diff: "Mudah", exp: "Serbuk kayu pasahan halus memperluas bidang sentuh dengan oksigen." },
+            { id: 8, q: "Energi aktivasi (Ea) adalah...", opts: ["Energi total yang dihasilkan reaksi", "Energi minimum untuk memulai reaksi melalui tumbukan efektif", "Perubahan entalpi dari reaktan menjadi produk", "Energi kinetik rata-rata produk", "Energi potensial maksimum produk"], ans: "B", diff: "Sedang", exp: "Ea adalah ambang energi minimum agar tumbukan antar partikel menghasilkan reaksi." },
+            { id: 9, q: "Setiap kenaikan suhu 10°C, laju reaksi menjadi 2 kali lebih cepat. Jika pada 20°C laju = 4 M/s, laju pada 50°C adalah...", opts: ["8 M/s", "16 M/s", "32 M/s", "64 M/s", "128 M/s"], ans: "C", diff: "Sulit", exp: "ΔT = 50-20 = 30°C. Faktor = 2^(30/10) = 2³ = 8. Laju akhir = 4 x 8 = 32 M/s." },
+            { id: 10, q: "Pada reaksi A + B → C, jika [A] dinaikkan 2 kali laju menjadi 2 kali, jika [B] dinaikkan 2 kali laju menjadi 4 kali. Persamaan laju adalah...", opts: ["v = k[A][B]", "v = k[A]²[B]", "v = k[A][B]²", "v = k[A]²[B]²", "v = k[A]⁰[B]"], ans: "C", diff: "Sulit", exp: "Orde A = 1 (2¹=2), Orde B = 2 (2²=4). Persamaan v = k[A][B]²." },
+            { id: 11, q: "Pernyataan yang tepat mengenai teori tumbukan adalah...", opts: ["Semua tumbukan pasti menghasilkan reaksi", "Tumbukan efektif terjadi jika energi kinetik ≥ Ea dan orientasi tepat", "Hanya tumbukan dengan posisi miring yang bereaksi", "Tumbukan tidak dipengaruhi oleh konsentrasi", "Katalis mengubah orientasi molekul menjadi tidak aktif"], ans: "B", diff: "Sedang", exp: "Syarat tumbukan efektif: Energi cukup (≥ Ea) dan posisi orientasi tepat." },
+            { id: 12, q: "Mengapa gas elpiji di ruang tertutup yang bocor sangat cepat meledak jika ada percikan api?", opts: ["Karena konsentrasi gas tinggi dan percikan memberi energi aktivasi", "Karena luas permukaan elpiji berkurang", "Karena terjadi penambahan katalis", "Karena massa elpiji membesar", "Karena tekanan udara luar nol"], ans: "A", diff: "Sedang", exp: "Percikan api memberikan Energi Aktivasi (Ea) untuk memulai reaksi eksotermik cepat." },
+            { id: 13, q: "Satuan dari konstanta laju reaksi (k) untuk reaksi orde pertama adalah...", opts: ["M·s⁻¹", "s⁻¹", "M⁻¹·s⁻¹", "M⁻²·s⁻¹", "M·s"], ans: "B", diff: "Sulit", exp: "v = k[A] -> (M/s) = k (M) -> k = s⁻¹." },
+            { id: 14, q: "Suatu reaksi endotermik memiliki ciri khas pada diagram energinya yaitu...", opts: ["Energi produk lebih rendah dari reaktan", "Energi produk lebih tinggi dari reaktan", "Tidak memiliki energi aktivasi", "Energi aktivasi bernilai negatif", "Garis produk menyentuh nol"], ans: "B", diff: "Sedang", exp: "Reaksi endoterm menyerap kalor sehingga energi produk > reaktan (ΔH > 0)." },
+            { id: 15, q: "Faktor apa yang dimanfaatkan pada pengawetan ikan asin dengan garam pekat?", opts: ["Suhu rendah", "Konsentrasi tinggi yang menarik air", "Luas permukaan", "Penggunaan katalis biologis", "Radiasi ultraviolet"], ans: "B", diff: "Sedang", exp: "Konsentrasi garam tinggi menghambat pertumbuhan bakteri penyebab busuk." },
+            { id: 16, q: "Berikut ini yang TIDAK memengaruhi laju reaksi heterogen (padat-cair) adalah...", opts: ["Pengadukan", "Luas permukaan padatan", "Suhu larutan", "Warna wadah reaksi", "Konsentrasi larutan"], ans: "D", diff: "Mudah", exp: "Warna wadah tidak berpengaruh pada kinetika laju reaksi." },
+            { id: 17, q: "Katalisator yang ada di dalam tubuh manusia untuk mempercepat metabolisme disebut...", opts: ["Inhibitor", "Enzim", "Isotop", "Polimer", "Kation"], ans: "A", diff: "Mudah", exp: "Enzim adalah biokatalisator alami dalam tubuh makhluk hidup." },
+            { id: 18, q: "Grafik yang menunjukkan reaksi orde 1 antara laju (v) dan konsentrasi [A] adalah...", opts: ["Garis horizontal", "Garis lurus miring ke atas berbanding lurus", "Parabola mendatar", "Kurva melengkung ke bawah", "Lingkaran"], ans: "B", diff: "Sedang", exp: "Orde 1 berarti laju berbanding lurus secara linear dengan konsentrasi (v = k[A])." },
+            { id: 19, q: "Pada industri pembuatan asam sulfat (proses Kontak), katalis yang digunakan adalah...", opts: ["Fe dan Al2O3", "V2O5 (Vanadium Pentoksida)", "Pt dan Rh", "Ni dan Pd", "CuSO4"], ans: "B", diff: "Sulit", exp: "Katalis V₂O₅ mempercepat reaksi oksidasi SO₂ menjadi SO₃." },
+            { id: 20, q: "Dalam reaksi A + 2B → C, jika laju pembentukan C adalah 0,05 M/s, maka laju pengurangan B adalah...", opts: ["0,025 M/s", "0,05 M/s", "0,10 M/s", "0,15 M/s", "0,20 M/s"], ans: "C", diff: "Sulit", exp: "Laju B = (Koefisien B / Koefisien C) x Laju C = (2 / 1) x 0,05 = 0,10 M/s." }
+        ];
+
+        let currentEvalIndex = 0;
+        let userEvalAnswers = new Array(20).fill(null);
+        let userEvalRagu = new Array(20).fill(false);
+        let evalSeconds = 0;
+        let evalTimerInt = null;
+
+        function startEvaluasiExam(e) {
+            e.preventDefault();
+            const nama = document.getElementById('evalNama').value;
+            const kelas = document.getElementById('evalKelas').value;
+
+            document.getElementById('evaluasiFormCard').classList.add('hidden');
+            document.getElementById('evaluasiExamContainer').classList.remove('hidden');
+
+            document.getElementById('examSiswaInfo').innerText = `${nama} | ${kelas}`;
+            renderNumberGrid();
+            loadQuestion(0);
+
+            evalSeconds = 0;
+            evalTimerInt = setInterval(() => {
+                evalSeconds++;
+                const m = String(Math.floor(evalSeconds / 60)).padStart(2, '0');
+                const s = String(evalSeconds % 60).padStart(2, '0');
+                document.getElementById('examTimerDisplay').innerText = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function renderNumberGrid() {
+            const grid = document.getElementById('numberGrid');
+            grid.innerHTML = '';
+            for (let i = 0; i < 20; i++) {
+                const btn = document.createElement('button');
+                btn.className = `p-2 rounded-lg text-xs font-bold transition border ${getGridBtnBg(i)}`;
+                btn.innerText = i + 1;
+                btn.onclick = () => loadQuestion(i);
+                grid.appendChild(btn);
+            }
+        }
+
+        function getGridBtnBg(idx) {
+            if (idx === currentEvalIndex) return 'bg-brand-900 text-white border-brand-900 shadow-md';
+            if (userEvalRagu[idx]) return 'bg-amber-400 text-white border-amber-500';
+            if (userEvalAnswers[idx] !== null) return 'bg-brand-600 text-white border-brand-600';
+            return 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200';
+        }
+
+        function loadQuestion(idx) {
+            currentEvalIndex = idx;
+            const qData = evaluasiDatabase[idx];
+
+            document.getElementById('qNumberBadge').innerText = `Soal No. ${idx + 1} dari 20`;
+            document.getElementById('qDifficultyBadge').innerText = qData.diff;
+            document.getElementById('qText').innerText = qData.q;
+            document.getElementById('raguCheckbox').checked = userEvalRagu[idx];
+
+            const optContainer = document.getElementById('qOptionsContainer');
+            optContainer.innerHTML = '';
+            const labels = ['A', 'B', 'C', 'D', 'E'];
+
+            qData.opts.forEach((optText, optIdx) => {
+                const letter = labels[optIdx];
+                const isSelected = userEvalAnswers[idx] === letter;
+                const optEl = document.createElement('label');
+                optEl.className = `flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition ${isSelected ? 'bg-brand-50 border-brand-500 font-bold text-brand-900' : 'bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-700'}`;
+                optEl.innerHTML = `
+                    <input type="radio" name="evalOpt" value="${letter}" ${isSelected ? 'checked' : ''} onchange="selectEvalAnswer('${letter}')" class="accent-brand-600 w-4 h-4">
+                    <span><strong>${letter}.</strong> ${optText}</span>
+                `;
+                optContainer.appendChild(optEl);
+            });
+
+            renderNumberGrid();
+        }
+
+        function selectEvalAnswer(letter) {
+            userEvalAnswers[currentEvalIndex] = letter;
+            renderNumberGrid();
+        }
+
+        function toggleRaguCurrent() {
+            userEvalRagu[currentEvalIndex] = document.getElementById('raguCheckbox').checked;
+            renderNumberGrid();
+        }
+
+        function prevQuestion() {
+            if (currentEvalIndex > 0) loadQuestion(currentEvalIndex - 1);
+        }
+
+        function nextQuestion() {
+            if (currentEvalIndex < 19) loadQuestion(currentEvalIndex + 1);
+        }
+
+        function submitEvaluasiExam() {
+            const nullCount = userEvalAnswers.filter(a => a === null).length;
+            if (nullCount > 0) {
+                if (!confirm(`Masih ada ${nullCount} soal belum dijawab. Yakin ingin mengirim jawaban?`)) return;
+            }
+
+            clearInterval(evalTimerInt);
+            document.getElementById('evaluasiExamContainer').classList.add('hidden');
+            document.getElementById('evaluasiResultContainer').classList.remove('hidden');
+
+            let benar = 0;
+            evaluasiDatabase.forEach((q, i) => {
+                if (userEvalAnswers[i] === q.ans) benar++;
+            });
+
+            const salah = 20 - benar;
+            const skor = Math.round((benar / 20) * 100);
+            const isTuntas = skor >= 75;
+
+            document.getElementById('resultSiswaTitle').innerText = document.getElementById('evalNama').value;
+            document.getElementById('resultSiswaSub').innerText = `${document.getElementById('evalKelas').value} | SMAN 46 Maluku Tengah`;
+            document.getElementById('resSkor').innerText = skor;
+            document.getElementById('resBenar').innerText = benar;
+            document.getElementById('resSalah').innerText = salah;
+
+            const resStatus = document.getElementById('resStatus');
+            const resIcon = document.getElementById('resultStatusIcon');
+
+            if (isTuntas) {
+                resStatus.innerText = 'TUNTAS (Sangat Baik)';
+                resStatus.className = 'text-xs font-bold text-emerald-700 block mt-1';
+                resIcon.className = 'w-20 h-20 rounded-full flex items-center justify-center mx-auto text-3xl bg-emerald-100 text-emerald-600';
+            } else {
+                resStatus.innerText = 'BELUM TUNTAS (Perlu Bimbingan)';
+                resStatus.className = 'text-xs font-bold text-red-700 block mt-1';
+                resIcon.className = 'w-20 h-20 rounded-full flex items-center justify-center mx-auto text-3xl bg-red-100 text-red-600';
+            }
+
+            // Rekomendasi
+            const rekText = document.getElementById('resRekomendasiText');
+            if (skor >= 90) {
+                rekText.innerText = "Selamat! Pemahamanmu sangat tinggi. Siap untuk melanjut ke materi Termokimia dan Kesetimbangan Kimia.";
+            } else if (skor >= 75) {
+                rekText.innerText = "Bagus! Kamu sudah tuntas KKM. Disarankan meninjau ulang pembahasan soal analisis orde dan grafik.";
+            } else {
+                rekText.innerText = "Kamu perlu melakukan remedial. Pelajari kembali Menu Materi (Teori Tumbukan & Faktor Laju) serta jalankan simulasi di Laboratorium Virtual.";
+            }
+
+            // Render Pembahasan List
+            const pembList = document.getElementById('pembahasanListContainer');
+            pembList.innerHTML = '';
+            evaluasiDatabase.forEach((q, i) => {
+                const userAns = userEvalAnswers[i] || '-';
+                const isCorrect = userAns === q.ans;
+
+                const item = document.createElement('div');
+                item.className = `p-4 rounded-xl border text-xs space-y-2 ${isCorrect ? 'bg-emerald-50/50 border-emerald-200' : 'bg-red-50/50 border-red-200'}`;
+                item.innerHTML = `
+                    <div class="flex justify-between font-bold text-slate-800">
+                        <span>${i + 1}. ${q.q}</span>
+                        <span class="${isCorrect ? 'text-emerald-600' : 'text-red-600'}">${isCorrect ? 'BENAR' : 'SALAH'}</span>
+                    </div>
+                    <div class="flex flex-wrap gap-4 text-[11px] text-slate-600">
+                        <span>Jawaban Kamu: <strong class="${isCorrect ? 'text-emerald-700' : 'text-red-700'}">${userAns}</strong></span>
+                        <span>Jawaban Benar: <strong class="text-emerald-700">${q.ans}</strong></span>
+                    </div>
+                    <p class="text-[11px] text-slate-700 bg-white p-2.5 rounded border border-slate-200"><strong>Pembahasan:</strong> ${q.exp}</p>
+                `;
+                pembList.appendChild(item);
+            });
+        }
+
+        function resetEvaluasiExam() {
+            userEvalAnswers = new Array(20).fill(null);
+            userEvalRagu = new Array(20).fill(false);
+            document.getElementById('evaluasiResultContainer').classList.add('hidden');
+            document.getElementById('evaluasiFormCard').classList.remove('hidden');
+        }
+
+        /* --- REFLEKSI LOGIC --- */
+        let currentRating = 5;
+        function setRating(r) {
+            currentRating = r;
+            const stars = document.querySelectorAll('#starRatingGroup i');
+            stars.forEach((star, idx) => {
+                if (idx < r) star.className = 'fa-solid fa-star text-amber-400';
+                else star.className = 'fa-regular fa-star text-slate-300';
+            });
+        }
+
+        function submitRefleksiForm(e) {
+            e.preventDefault();
+            document.getElementById('refleksiSuccessFeedback').classList.remove('hidden');
+        }
+
+        /* --- ON LOAD INITIALIZATION --- */
+        window.onload = function() {
+            initHeroCanvas();
+            animateHero();
+            window.addEventListener('resize', initHeroCanvas);
+        };
+    </script>
+</body>
+</html>
